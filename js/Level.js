@@ -1,0 +1,81 @@
+export class Level {
+    constructor(levelConfig) {
+        this.tileSize = levelConfig.tileSize;
+        this.timeLeft = levelConfig.timer;
+        this.score = 0;
+
+        this.platforms = [];
+        this.coins = [];
+        this.goal = null;
+        this.playerStartX = 0;
+        this.playerStartY = 0;
+
+        // Parse the grid
+        levelConfig.grid.forEach((row, rowIndex) => {
+            [...row].forEach((char, colIndex) => {
+                const x = colIndex * this.tileSize;
+                const y = rowIndex * this.tileSize;
+
+                if (char === "#") {
+                    this.platforms.push({ x, y, w: this.tileSize, h: this.tileSize });
+                } else if (char === "C") {
+                    this.coins.push({ x: x + 16, y: y + 16, collected: false });
+                } else if (char === "G") {
+                    this.goal = { x, y, w: this.tileSize, h: this.tileSize * 2 };
+                } else if (char === "P") {
+                    this.playerStartX = x;
+                    this.playerStartY = y;
+                }
+            });
+        });
+
+        // Asset Loading (Previous code)
+        this.skyImage = new Image();
+        this.skyImage.src = './assets/sky_bg.png';
+        this.groundImage = new Image();
+        this.groundImage.src = './assets/ground_tileset.png';
+        this.coinImage = new Image();
+        this.coinImage.src = './assets/coin_spritesheet.png';
+        this.gameFrame = 0;
+        this.staggerFrames = 5;
+    }
+
+    update(deltaTime) {
+        this.gameFrame++;
+        this.timeLeft -= deltaTime;
+        return this.timeLeft <= 0;
+    }
+
+    draw(ctx, cameraX) {
+        // Draw Skybox (looping logic from previous step)
+        const skyX = -(cameraX * 0.125) % this.skyImage.width;
+        ctx.drawImage(this.skyImage, skyX, 0);
+        ctx.drawImage(this.skyImage, skyX + this.skyImage.width, 0);
+
+        // Draw Platforms (Tiles)
+        this.platforms.forEach(p => {
+            ctx.drawImage(this.groundImage, 0, 0, 32, 32, p.x - cameraX, p.y, p.w, p.h);
+        });
+
+        // Draw Coins
+        let coinFrame = Math.floor(this.gameFrame / this.staggerFrames) % 6;
+        this.coins.forEach(c => {
+            if (!c.collected) {
+                ctx.drawImage(this.coinImage, coinFrame * 16, 0, 16, 16, c.x - cameraX - 8, c.y - 8, 16, 16);
+            }
+        });
+
+        // Draw Goal
+        if (this.goal) {
+            ctx.fillStyle = "green";
+            ctx.fillRect(this.goal.x - cameraX, this.goal.y, this.goal.w, this.goal.h);
+        }
+    }
+
+    drawUI(ctx) {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 24px Arial";
+        ctx.fillText(`SCORE: ${this.score}`, 20, 40);
+        ctx.fillText(`TIME: ${Math.ceil(this.timeLeft)}`, ctx.canvas.width - 120, 40);
+    }
+}
