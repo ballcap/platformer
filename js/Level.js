@@ -30,15 +30,25 @@ export class Level {
         });
 
         // Asset Loading (Previous code)
+        //sky
         this.skyImage = new Image();
         this.skyImage.src = './assets/sky_bg.png';
+        //ground
         this.groundImage = new Image();
         this.groundImage.src = './assets/ground_tileset.png';
+        //coins
         this.coinHeight = 32;
         this.coinWidth = 32;
         this.totalCoinFrames = 4;
         this.coinImage = new Image();
         this.coinImage.src = './assets/coin_spritesheet.png';
+        //goal
+        this.goalImage = new Image();
+        this.goalImage.src = './assets/end_goal.png';
+        this.goalWidth = 32;
+        this.goalHeight = 32;
+        this.totalGoalFrames = 6;
+
         this.gameFrame = 0;
         this.staggerFrames = 8;
     }
@@ -79,8 +89,26 @@ export class Level {
 
         // Draw Goal
         if (this.goal) {
-            ctx.fillStyle = "green";
-            ctx.fillRect(this.goal.x - cameraX, this.goal.y, this.goal.w, this.goal.h);
+            const totalSteps = (this.totalGoalFrames * 2) - 2;
+            const cycleIndex = Math.floor(this.gameFrame / this.staggerFrames) % totalSteps;
+
+            // 2. Use "Ping-Pong" logic to determine the actual frame column
+            let goalFrame;
+            if (cycleIndex < this.totalGoalFrames) {
+                goalFrame = cycleIndex; // 0, 1, 2, 3, 4, 5
+            } else {
+                goalFrame = totalSteps - cycleIndex; // 4, 3, 2, 1
+            }
+
+            const goalSourceX = goalFrame * this.goalWidth;
+
+            // 3. Draw the animated goal (drawing 2 tiles high as before)
+            ctx.drawImage(
+                this.goalImage,
+                goalSourceX, 0, this.goalWidth, this.goalHeight, // Source
+                this.goal.x - cameraX, this.goal.y,              // Destination
+                this.goal.w, this.goal.h                         // Size (32x64)
+            );
         }
     }
 
