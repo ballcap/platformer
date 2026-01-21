@@ -35,7 +35,7 @@ export class Level {
         this.groundImage = new Image();
         this.groundImage.src = './assets/ground_tileset.png';
         this.coinHeight = 32;
-        this.cointWidth = 32;
+        this.coinWidth = 32;
         this.totalCoinFrames = 4;
         this.coinImage = new Image();
         this.coinImage.src = './assets/coin_spritesheet.png';
