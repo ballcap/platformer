@@ -21,6 +21,7 @@ export class Level {
                 } else if (char === "C") {
                     this.coins.push({ x: x + 16, y: y + 16, collected: false });
                 } else if (char === "G") {
+                    // Setting h to this.tileSize * 2 (64px) ensures it is a 2-tile high target
                     this.goal = { x, y, w: this.tileSize, h: this.tileSize * 2 };
                 } else if (char === "P") {
                     this.playerStartX = x;
