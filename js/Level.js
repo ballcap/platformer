@@ -34,10 +34,13 @@ export class Level {
         this.skyImage.src = './assets/sky_bg.png';
         this.groundImage = new Image();
         this.groundImage.src = './assets/ground_tileset.png';
+        this.coinHeight = 32;
+        this.cointWidth = 32;
+        this.totalCoinFrames = 4;
         this.coinImage = new Image();
         this.coinImage.src = './assets/coin_spritesheet.png';
         this.gameFrame = 0;
-        this.staggerFrames = 5;
+        this.staggerFrames = 8;
     }
 
     update(deltaTime) {
@@ -57,11 +60,20 @@ export class Level {
             ctx.drawImage(this.groundImage, 0, 0, 32, 32, p.x - cameraX, p.y, p.w, p.h);
         });
 
-        // Draw Coins
-        let coinFrame = Math.floor(this.gameFrame / this.staggerFrames) % 6;
+        // --- Updated Coin Animation Logic ---
+        // Cycle through 4 frames (0, 1, 2, 3)
+        let coinFrameIndex = Math.floor(this.gameFrame / this.staggerFrames) % this.totalCoinFrames;
+        let coinSourceX = coinFrameIndex * this.coinWidth;
+
         this.coins.forEach(c => {
             if (!c.collected) {
-                ctx.drawImage(this.coinImage, coinFrame * 16, 0, 16, 16, c.x - cameraX - 8, c.y - 8, 16, 16);
+                ctx.drawImage(
+                    this.coinImage,
+                    coinSourceX, 0,           // Source X (0, 32, 64, or 96), Source Y
+                    this.coinWidth, this.coinHeight, // Source W, H (32x32)
+                    c.x - cameraX - 16, c.y - 16,    // Destination X, Y (Centered)
+                    this.coinWidth, this.coinHeight  // Destination W, H
+                );
             }
         });
 
