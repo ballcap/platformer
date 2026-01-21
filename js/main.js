@@ -1,7 +1,7 @@
 import { Player } from './Player.js';
 import { InputHandler } from './Input.js';
 import { Level } from './Level.js';
-import { LEVEL_MAPS } from './levels.js'; // Ensure casing matches your filename
+import { LEVEL_MAPS } from './Levels.js'; // Ensure casing matches your filename
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
