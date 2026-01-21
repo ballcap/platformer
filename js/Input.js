@@ -1,4 +1,3 @@
-// js/Input.js
 export class InputHandler {
     constructor() {
         this.keys = {};
