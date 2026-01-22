@@ -10,6 +10,9 @@ export class Player {
         this.jumpForce = 12;
         this.gravity = .6;
         this.onGround = false;
+        this.facing = 'right';
+        this.flipScale = 1;      // Current visual scale (1 to -1)
+        this.flipSpeed = 0.15; //speed of flip
 
         this.image = new Image();
         this.image.src = './assets/player_spritesheet.png';
@@ -34,6 +37,17 @@ export class Player {
                 this.facing = 'left';
             } else {
                 this.velX *= 0.8;
+            }
+
+            // VISUAL FLIP LOGIC: Smoothly move flipScale toward the target (-1 or 1)
+            let targetScale = (this.facing === 'right') ? 1 : -1;
+        
+            if (this.flipScale !== targetScale) {
+                if (this.flipScale < targetScale) {
+                    this.flipScale = Math.min(this.flipScale + this.flipSpeed, targetScale);
+                } else {
+                    this.flipScale = Math.max(this.flipScale - this.flipSpeed, targetScale);
+                }
             }
 
             if ((input.isPressed('ArrowUp') || input.isPressed('Space'))) {
@@ -88,6 +102,23 @@ export class Player {
     draw(ctx, cameraX) {
         ctx.save();
 
+        // Move to player center for rotation/scaling
+        const centerX = this.x - cameraX + this.width / 2;
+        const centerY = this.y + this.height / 2;
+        
+        ctx.translate(centerX, centerY);
+        
+        // Scale horizontally based on our smooth flipScale
+        ctx.scale(this.flipScale, 1);
+
+        let frameIndex = Math.floor(this.gameFrame / this.staggerFrames) % 2;
+        let sourceX = frameIndex * this.spriteWidth;
+
+        //
+        //
+        //
+        //
+        
         if (this.facing === 'left') {
             ctx.translate(this.x - cameraX + this.width / 2, 0);
             ctx.scale(-1, 1);
@@ -101,10 +132,10 @@ export class Player {
         // Draw the current frame
         ctx.drawImage(
             this.image,
-            sourceX, 0,                             // Source X, Y (Y is always 0)
+            sourceX, 0,
             this.spriteWidth, this.spriteHeight,
-            this.x - cameraX, this.y,               // Destination X, Y
-            this.width, this.height                 // Destination W, H
+            -this.width / 2, -this.height / 2, // Centering the draw
+            this.width, this.height
         );
 
         ctx.restore();
