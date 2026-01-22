@@ -39,20 +39,20 @@ export class Player {
                 this.velX *= 0.8;
             }
 
-            // VISUAL FLIP LOGIC: Smoothly move flipScale toward the target (-1 or 1)
-            let targetScale = (this.facing === 'right') ? 1 : -1;
-        
-            if (this.flipScale !== targetScale) {
-                if (this.flipScale < targetScale) {
-                    this.flipScale = Math.min(this.flipScale + this.flipSpeed, targetScale);
-                } else {
-                    this.flipScale = Math.max(this.flipScale - this.flipSpeed, targetScale);
-                }
-            }
-
             if ((input.isPressed('ArrowUp') || input.isPressed('Space'))) {
                 this.velY = -this.jumpForce;
                 this.onGround = false;
+            }
+        }
+
+        // VISUAL FLIP LOGIC: Smoothly move flipScale toward the target (-1 or 1)
+        let targetScale = (this.facing === 'right') ? 1 : -1;
+        
+        if (this.flipScale !== targetScale) {
+            if (this.flipScale < targetScale) {
+                this.flipScale = Math.min(this.flipScale + this.flipSpeed, targetScale);
+            } else {
+                this.flipScale = Math.max(this.flipScale - this.flipSpeed, targetScale);
             }
         }
 
