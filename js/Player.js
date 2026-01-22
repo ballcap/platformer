@@ -99,37 +99,23 @@ export class Player {
                rect1.y + rect1.height > rect2.y;
     }
 
-    draw(ctx, cameraX) {
+        draw(ctx, cameraX) {
         ctx.save();
 
-        // Move to player center for rotation/scaling
+        // 1. Position the "paper" pivot point at the center of the player
         const centerX = this.x - cameraX + this.width / 2;
         const centerY = this.y + this.height / 2;
         
         ctx.translate(centerX, centerY);
         
-        // Scale horizontally based on our smooth flipScale
+        // 2. Apply the smooth horizontal flip
         ctx.scale(this.flipScale, 1);
 
+        // 3. Animation frame calculation
         let frameIndex = Math.floor(this.gameFrame / this.staggerFrames) % 2;
         let sourceX = frameIndex * this.spriteWidth;
 
-        //
-        //
-        //
-        //
-        
-        if (this.facing === 'left') {
-            ctx.translate(this.x - cameraX + this.width / 2, 0);
-            ctx.scale(-1, 1);
-            ctx.translate(-(this.x - cameraX + this.width / 2), 0);
-        }
-
-        // Calculate which frame (0 or 1) to show based on gameFrame and staggerFrames
-        let frameIndex = Math.floor(this.gameFrame / this.staggerFrames) % 2; // % 2 ensures it cycles between frame 0 and 1
-        let sourceX = frameIndex * this.spriteWidth;
-
-        // Draw the current frame
+        // 4. Draw the sprite centered on the pivot point
         ctx.drawImage(
             this.image,
             sourceX, 0,
